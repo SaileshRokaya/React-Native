@@ -12,7 +12,7 @@
       ],
       "@assets/*": [
         "assets/*"
-      ],
+      ]
     }
   },
   "include": [
