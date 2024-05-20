@@ -4,7 +4,7 @@ import { Product } from '../types';
 import { Link, useSegments } from 'expo-router';
 
 export const defaultPizzaImage =
-  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/defalut.png';
+  'https://img.freepik.com/free-psd/regina-style-pizza-isolated-transparent-background_191095-28007.jpg?size=338&ext=jpg&ga=GA1.1.2082370165.1716076800&semt=ais_user';
 
 type ProductListItemProps = {
   product: Product;
