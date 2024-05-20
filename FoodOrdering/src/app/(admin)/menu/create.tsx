@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
 import React, { useState } from "react";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import * as ImagePicker from 'expo-image-picker';
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const CreateProductScreen = () => {
 
@@ -12,6 +12,9 @@ const CreateProductScreen = () => {
     const [price, setPrice] = useState('');
     const [errors, setErrors] = useState('');
     const [image, setImage] = useState<string | null>(null);
+
+    const { id } = useLocalSearchParams();
+    const isUpdating = !!id;
 
     const resetFields = () => {
         setName('');
@@ -34,6 +37,15 @@ const CreateProductScreen = () => {
         return true;
     };
 
+    const onSubmit = () => {
+        if (isUpdating) {
+            // update
+            onUpdateCreate();
+        } else {
+            onCreate();
+        }
+    }
+
     const onCreate = () => {
         if (!validateInput()) {
             return;
@@ -45,25 +57,53 @@ const CreateProductScreen = () => {
         resetFields();
     }
 
+    const onUpdateCreate = () => {
+        if (!validateInput()) {
+            return;
+        }
+        console.warn('Updating Product:', name, price);
+
+        // Save in the database
+
+        resetFields();
+    }
+
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
-    
+
         console.log(result);
-    
+
         if (!result.canceled) {
-          setImage(result.assets[0].uri);
+            setImage(result.assets[0].uri);
         }
-      };
+    };
+
+    const onDelete = () => {
+        console.warn('Delete!!!!');
+    }
+
+    const confirmDelete = () => {
+        Alert.alert('Confirm', 'Are you sure you want to delete this product', [
+            {
+                text: 'Cancel',
+            },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: onDelete,
+            }
+        ]);
+    };
 
     return (
         <View style={styles.container}>
-            <Stack.Screen options={{title:"Create Product"}}/>
+            <Stack.Screen options={{ title: isUpdating ? 'Update Product' : "Create Product" }} />
 
             <Image source={{ uri: image || defaultPizzaImage }} style={styles.image} />
             <Text onPress={pickImage} style={styles.textButton}>Select Image</Text>
@@ -84,7 +124,12 @@ const CreateProductScreen = () => {
                 keyboardType="numeric" />
 
             <Text style={{ color: 'red' }}>{errors}</Text>
-            <Button onPress={onCreate} text="Create" />
+            <Button onPress={onSubmit} text={isUpdating ? 'Updte' : "Create"} />
+            {isUpdating && (
+                <Text onPress={confirmDelete} style={styles.textButton}>
+                    Delete
+                </Text>
+            )}
 
         </View>
     )
