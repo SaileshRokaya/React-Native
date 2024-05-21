@@ -25,7 +25,7 @@ const OrderDetailScreen = () => {
         data={order.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
-        ListHeaderComponent={() => <OrderListItem order={order} />}
+        // ListHeaderComponent={() => <OrderListItem order={order} />}
         ListFooterComponent={() => <>
           <Text style={{ fontWeight: 'bold' }}>Status</Text>
           <View style={{ flexDirection: 'row', gap: 5 }}>
